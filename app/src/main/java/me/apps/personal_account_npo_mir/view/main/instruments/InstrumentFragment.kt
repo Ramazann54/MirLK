@@ -53,11 +53,19 @@ class InstrumentFragment : Fragment() {
         meterName?.text = name
     }
 
+    fun setMeterId(id: Int) {
+        meterIdTextView = view?.findViewById(R.id.meterIdTextView)
+        meterIdTextView?.text = id.toString()
+    }
+
+
     private val simpleDate = SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.CHINA)
     private val presenter = InstrumentFragmentPresenter()
     private var sumIndications: String = ""
     private var dateView: TextView? = null
     private var meterName: TextView? = null
+
+    private var meterIdTextView: TextView? = null
 
 
 }

@@ -1,5 +1,6 @@
 package me.apps.personal_account_npo_mir.model.server_connect.get_measures
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ class GetMeasuresServerRequest(
                 val urlAddress: String =
                     "$urlForHostLoopbackInterface/Measures/getmeasures/$deviceId/$dateFrom/$dateTo/$pageNumber/$countInPage"
                 println(urlAddress)
+                Log.d("ARCHIVE_TEST", "URL архива = $urlAddress")
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
                 var measures: String = ""

@@ -38,7 +38,7 @@ class GetDiagnosticsServerRequest(
                 var streamReader: InputStreamReader? = null
                 try {
                     val urlAddress: String =
-                        url + "Diagnostics/" + meterId
+                        url + "/Diagnostics/" + meterId
                     var diagnosticsCode = ""
                     httpURLConnection =
                         withContext(Dispatchers.IO) {

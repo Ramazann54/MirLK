@@ -48,7 +48,7 @@ class PutMeasureServerRequest(
                 }
             } else {
                 val urlAddress: String =
-                    urlForHostLoopbackInterface + "Measures/PutMeasure?deviceId=" + deviceId
+                    urlForHostLoopbackInterface + "/Measures/PutMeasure?deviceId=" + deviceId
                 val httpURLConnection: HttpURLConnection? = null
                 val writer: OutputStreamWriter? = null
                 val gson = Gson()

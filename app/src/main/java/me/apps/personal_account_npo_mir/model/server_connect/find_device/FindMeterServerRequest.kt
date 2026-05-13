@@ -44,7 +44,7 @@ class FindMeterServerRequest(
                 var streamReader: InputStreamReader? = null
                 try {
                     val urlAddress: String =
-                        url + "Devices/find/" + key + "/" + limit
+                        url + "/Devices/find/" + key + "/" + limit
                     var meter = ""
                     httpURLConnection =
                         withContext(Dispatchers.IO) {

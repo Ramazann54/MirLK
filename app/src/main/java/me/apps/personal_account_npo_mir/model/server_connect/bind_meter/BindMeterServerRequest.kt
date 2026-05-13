@@ -45,7 +45,7 @@ class BindMeterServerRequest(
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
                 var requestCode: String = ""
-                val urlAddress = URL(url + "Devices/linktouser?deviceId=" + deviceId)
+                val urlAddress = URL(url + "/Devices/linktouser?deviceId=" + deviceId)
                 try {
                     httpURLConnection = urlAddress.openConnection() as HttpURLConnection
                     httpURLConnection.setRequestProperty("X-User-Token", token)

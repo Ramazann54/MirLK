@@ -38,7 +38,7 @@ class GetMetersServerRequest(
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
                 try {
-                    val urlAddress: String = url + "Devices/getdevices"
+                    val urlAddress: String = url + "/Devices/getdevices"
                     var devices: String = ""
                     httpURLConnection =
                         URL(urlAddress).openConnection() as HttpURLConnection

@@ -43,7 +43,7 @@ class GetLastMeasureServerRequest(
                 }
             } else {
                 val urlAdress: String =
-                    urlForHostLoopbackInterface + "Measures/getlastmeasures/" + deviceId
+                    urlForHostLoopbackInterface + "/Measures/getlastmeasures/" + deviceId
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
                 var measure: String = ""

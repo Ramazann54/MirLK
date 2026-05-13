@@ -44,7 +44,7 @@ class SignInServerRequest(
                 var streamReader: InputStreamReader? = null
                 try {
                     val urlAddress: String =
-                        url + "SignIn" + "/" + username + "/" + password
+                        url + "/SignIn" + "/" + username + "/" + password
                     var token = ""
                     httpURLConnection =
                         withContext(Dispatchers.IO) {

@@ -47,7 +47,7 @@ class SignUpServerRequest(
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
                 try {
-                    val URLAddress: String = url + "SignUp" + "/" + username + "/" + password
+                    val URLAddress: String = url + "/SignUp" + "/" + username + "/" + password
                     var token: String = ""
                     httpURLConnection =
                         URL(URLAddress).openConnection() as HttpURLConnection

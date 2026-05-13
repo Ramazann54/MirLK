@@ -1,13 +1,11 @@
 package me.apps.personal_account_npo_mir.model.services
 
 import me.apps.personal_account_npo_mir.model.abstractions.archive_date.IArchiveDateService
+import me.apps.personal_account_npo_mir.model.abstractions.measures.Measure
 
-class ArchiveDateService() : IArchiveDateService {
-    override var dates: List<Long>
-        get() = _dates
-        set(value) {
-            _dates = value
-        }
+class ArchiveDateService : IArchiveDateService {
+
+    override var dates: List<String> = mutableListOf()
 
     override var datesCount: Int
         get() = _datesCount
@@ -21,10 +19,9 @@ class ArchiveDateService() : IArchiveDateService {
             _currentClickedDate = value
         }
 
-    var _dates: List<Long> = listOf(12, 1990363765
-        , 14, 1690000000
-        , 16, 17, 1000363765
-        , 19, 20)
-    var _datesCount: Int = 0
-    var _currentClickedDate = 0
+    override var arrayOfMeasures: Array<Measure> = arrayOf()
+
+    private var _datesCount: Int = 0
+    private var _currentClickedDate: Int = 0
+    override var meterId: Int? = null
 }

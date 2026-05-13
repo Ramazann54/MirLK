@@ -13,7 +13,7 @@ import me.apps.personal_account_npo_mir.model.abstractions.user_data.IUserDataSe
 import me.apps.personal_account_npo_mir.model.services.TokenService
 import me.apps.personal_account_npo_mir.model.services.*
 
-class App : Application() {
+class   App : Application() {
     override fun onCreate() {
         super.onCreate()
         userDataService = UserDataService()
@@ -32,7 +32,7 @@ class App : Application() {
         lateinit var loginService: ILoginService
         lateinit var userDataService: IUserDataService
         lateinit var networkScope: CoroutineScope
-        lateinit var archiveDateService:IArchiveDateService
+        lateinit var archiveDateService: IArchiveDateService
         lateinit var metersService: IMetersService
         lateinit var indexService: IIndexService
     }

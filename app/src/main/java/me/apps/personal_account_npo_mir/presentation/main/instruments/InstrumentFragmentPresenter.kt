@@ -26,6 +26,7 @@ class InstrumentFragmentPresenter : IPresenter<InstrumentFragment>{
         this.view?.setMeterTime(App.measuresService.measuresMap[meterIndex+1]?.timestamp.toString())
         name = App.metersService.meters[meterIndex].name
         view?.setMeterName(name)
+        view?.setMeterId(App.metersService.meters[meterIndex].id)
     }
 
     private var view: InstrumentFragment? = null
