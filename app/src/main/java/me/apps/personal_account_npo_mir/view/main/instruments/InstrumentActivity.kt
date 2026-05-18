@@ -52,6 +52,8 @@ class InstrumentActivity : FragmentActivity(), IMainView,
 
         textView = findViewById(R.id.addDevicesTextView)
 
+        presenter.onViewCreated(this)
+
         adapter = DeviceAdapter(this, presenter)
 
         addDevicesButton = findViewById(R.id.addDevicesBtn)
@@ -74,8 +76,6 @@ class InstrumentActivity : FragmentActivity(), IMainView,
             diagnosticButton.visibility = View.GONE
             textView.visibility = View.VISIBLE
         }
-        presenter.onViewCreated(this)
-
     }
 
 
@@ -103,9 +103,32 @@ class InstrumentActivity : FragmentActivity(), IMainView,
     }
 
     override fun refreshItems() {
+        runOnUiThread {
+            val currentItem = viewPager.currentItem
 
+            adapter = DeviceAdapter(this, presenter)
+            viewPager.adapter = adapter
+
+            if (adapter.itemCount > 0) {
+                val safeItem = currentItem.coerceAtMost(adapter.itemCount - 1)
+                viewPager.setCurrentItem(safeItem, false)
+            }
+
+            if (adapter.itemCount == 0) {
+                informationButton.visibility = View.GONE
+                archiveButton.visibility = View.GONE
+                transmittalButton.visibility = View.GONE
+                diagnosticButton.visibility = View.GONE
+                textView.visibility = View.VISIBLE
+            } else {
+                informationButton.visibility = View.VISIBLE
+                archiveButton.visibility = View.VISIBLE
+                transmittalButton.visibility = View.VISIBLE
+                diagnosticButton.visibility = View.VISIBLE
+                textView.visibility = View.GONE
+            }
+        }
     }
-
     override fun setHeader(header: String) {
 
     }
@@ -159,6 +182,17 @@ class InstrumentActivity : FragmentActivity(), IMainView,
         presenter.onDestroy()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        if (firstResume) {
+            firstResume = false
+        } else {
+            presenter.refreshData()
+        }
+    }
+
+
     private lateinit var adapter: DeviceAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
@@ -170,4 +204,5 @@ class InstrumentActivity : FragmentActivity(), IMainView,
     private lateinit var logoutButton: Button
     private lateinit var textView: TextView
     private var presenter = InstrumentPresenter()
+    private var firstResume = true
 }

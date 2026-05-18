@@ -44,7 +44,7 @@ class MeasuresService(private val scope: CoroutineScope):IMeasureService {
         this.measure = measure
     }
     override fun saveMeasuresMap(key:Int, measure: Measure){
-
+        measuresMap[key] = measure
     }
 
     override var measure : Measure? = null

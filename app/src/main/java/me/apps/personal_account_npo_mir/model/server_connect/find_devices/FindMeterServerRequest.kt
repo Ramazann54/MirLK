@@ -1,4 +1,4 @@
-package me.apps.personal_account_npo_mir.model.server_connect.find_device
+package me.apps.personal_account_npo_mir.model.server_connect.find_devices
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import me.apps.personal_account_npo_mir.model.server_connect.ErrorCode
 import me.apps.personal_account_npo_mir.model.server_connect.abstractions.IServerRequest
 import me.apps.personal_account_npo_mir.model.server_connect.abstractions.IServerRequestResultListener
-import me.apps.personal_account_npo_mir.model.server_connect.sign_in.SignInRequestResult
 import java.io.IOException
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
@@ -16,7 +15,7 @@ import java.net.URL
 
 class FindMeterServerRequest(
     private val url: String,
-    private val key: Int,
+    private val key: Int?,
     private val limit: Int,
     private val token: String,
     private val scope: CoroutineScope
@@ -45,7 +44,7 @@ class FindMeterServerRequest(
                 try {
                     val urlAddress: String =
                         url + "/Devices/find/" + key + "/" + limit
-                    var meter = ""
+                    var meters = ""
                     httpURLConnection =
                         withContext(Dispatchers.IO) {
                             URL(urlAddress).openConnection()
@@ -56,9 +55,9 @@ class FindMeterServerRequest(
                     }
                     httpURLConnection.setRequestProperty("X-User-Token", token)
                     streamReader = InputStreamReader(httpURLConnection.inputStream)
-                    streamReader.use { meter = it.readText() }
+                    streamReader.use { meters = it.readText() }
                     withContext(Dispatchers.Main) {
-                        listener?.onRequestSuccess(FindMeterRequestResult(meter))
+                        listener?.onRequestSuccess(FindMeterRequestResult(meters))
                     }
                 } catch (e: MalformedURLException) {
                     withContext(Dispatchers.Main) {

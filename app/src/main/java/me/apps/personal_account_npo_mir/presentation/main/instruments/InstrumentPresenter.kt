@@ -1,10 +1,13 @@
 package me.apps.personal_account_npo_mir.presentation.main.instruments
 
+import android.util.Log
 import com.google.gson.Gson
 import me.apps.personal_account_npo_mir.di.App
+import me.apps.personal_account_npo_mir.model.abstractions.measures.Measure
 import me.apps.personal_account_npo_mir.model.abstractions.meters.Meter
 import me.apps.personal_account_npo_mir.model.server_connect.ErrorCode
 import me.apps.personal_account_npo_mir.model.server_connect.abstractions.IServerRequestResultListener
+import me.apps.personal_account_npo_mir.model.server_connect.get_last_measure.GetLastMeasureRequestResult
 import me.apps.personal_account_npo_mir.model.server_connect.get_meters.GetMetersRequestResult
 import me.apps.personal_account_npo_mir.presentation.abstraction.IPresenter
 import me.apps.personal_account_npo_mir.view.abstractions.main.IMainView
@@ -17,8 +20,11 @@ class InstrumentPresenter : IPresenter<IMainView>,
     override fun onViewCreated(view: IMainView) {
         this.view = view
         val username = App.userDataService.username
-        val token = App.userDataService.token
         view.setHeader(username)
+        refreshData()
+    }
+    fun refreshData() {
+        val token = App.userDataService.token
         App.metersService.getMeters(token, this)
     }
 
@@ -26,14 +32,39 @@ class InstrumentPresenter : IPresenter<IMainView>,
         try {
             val meters:Array<Meter> = Gson().fromJson(result.meters, Array<Meter>::class.java)
             App.metersService.saveMeters(meters)
+            view?.refreshItems()
+            meters.forEach { meter ->
+                    App.measuresService.getLastMeasure(
+                        meter.id,
+                        App.userDataService.token,
+                        object : IServerRequestResultListener<GetLastMeasureRequestResult>{
+                            override fun onRequestSuccess(result: GetLastMeasureRequestResult) {
+                                try{
+                                    val measure: Measure = Gson().fromJson(
+                                        result.measure,
+                                        Measure::class.java
+                                    )
+                                    App.measuresService.saveMeasuresMap(result.deviceId, measure)
+                                    view?.refreshItems()
+                                }
+                                catch (e: Exception){
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onRequestFail(message: ErrorCode){
+                                println("Ошибка загрузки последнего показания: $message")
+                            }
+                        }
+                    )
+            }
         }catch (e:Exception){
             e.printStackTrace()
         }
-        // TODO: добавляем метеры в сервис, потом брать их оттуда и выбранного ID передавать в следующие активити (Архив ->  onDateArchiveActivity)
     }
 
     override fun onRequestFail(message: ErrorCode) {
-        println("ploho")
+        println("Ошибка загрузки счетчиков:$message")
     }
 
     /**

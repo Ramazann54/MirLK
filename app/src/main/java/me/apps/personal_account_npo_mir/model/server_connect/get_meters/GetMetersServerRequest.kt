@@ -12,6 +12,7 @@ import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
+import android.util.Log
 
 class GetMetersServerRequest(
     private val url: String,
@@ -40,6 +41,8 @@ class GetMetersServerRequest(
                 try {
                     val urlAddress: String = url + "/Devices/getdevices"
                     var devices: String = ""
+                    Log.d("CHECK_METERS", "URL: $urlAddress")
+                    Log.d("CHECK_METERS", "Token exists: ${token.isNotBlank()}")
                     httpURLConnection =
                         URL(urlAddress).openConnection() as HttpURLConnection
                     httpURLConnection.setRequestProperty("X-User-Token", token)
@@ -47,8 +50,11 @@ class GetMetersServerRequest(
                         connectTimeout = 10000
                         doInput = true
                     }
+                    Log.d("GET_METERS", "Response code: ${httpURLConnection.responseCode}")
+
                     streamReader = InputStreamReader(httpURLConnection.inputStream)
                     streamReader.use { devices = it.readText() }
+                    Log.d("CHECK_METERS", "Server response: $devices")
                     withContext(Dispatchers.Main) {
                         listener?.onRequestSuccess(GetMetersRequestResult(devices))
                     }

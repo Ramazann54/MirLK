@@ -8,6 +8,7 @@ import me.apps.personal_account_npo_mir.model.server_connect.abstractions.IServe
 import me.apps.personal_account_npo_mir.model.server_connect.get_last_measure.GetLastMeasureRequestResult
 import me.apps.personal_account_npo_mir.presentation.abstraction.IPresenter
 import me.apps.personal_account_npo_mir.view.main.instruments.InstrumentFragment
+import android.util.Log
 
 class InstrumentFragmentPresenter : IPresenter<InstrumentFragment>{
 
@@ -22,11 +23,27 @@ class InstrumentFragmentPresenter : IPresenter<InstrumentFragment>{
 
     fun onMeterIndexCreate(meterIndex : Int){
         this.meterIndex = meterIndex
-        this.view?.setMeterIndications(App.measuresService.measuresMap[meterIndex+1]?.summary.toString())
-        this.view?.setMeterTime(App.measuresService.measuresMap[meterIndex+1]?.timestamp.toString())
-        name = App.metersService.meters[meterIndex].name
+
+        Log.d("CHECK_CARD", "onMeterIndexCreate meterIndex=$meterIndex")
+        Log.d("CHECK_CARD", "meters count=${App.metersService.meters.size}")
+
+        val meter = App.metersService.meters[meterIndex]
+        Log.d("CHECK_CARD", "meter id=${meter.id}, name=${meter.name}, serial=${meter.serialNumber}")
+        val measure = App.measuresService.measuresMap[meter.id]
+        Log.d("CHECK_CARD", "measure for meterId=${meter.id}: $measure")
+
+        name = meter.name
         view?.setMeterName(name)
-        view?.setMeterId(App.metersService.meters[meterIndex].id)
+        view?.setMeterId(meter.id)
+
+        if (measure!=null){
+            view?.setMeterIndications(measure.summary)
+            view?.setMeterTime(measure.timestamp)
+        }
+        else {
+            view?.setMeterIndications("—")
+            view?.setMeterTime("Данные загружаются")
+        }
     }
 
     private var view: InstrumentFragment? = null

@@ -1,5 +1,6 @@
 package me.apps.personal_account_npo_mir.model.services
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import me.apps.personal_account_npo_mir.di.App
 import me.apps.personal_account_npo_mir.model.abstractions.meters.IMetersService
@@ -7,8 +8,8 @@ import me.apps.personal_account_npo_mir.model.abstractions.meters.Meter
 import me.apps.personal_account_npo_mir.model.server_connect.abstractions.IServerRequestResultListener
 import me.apps.personal_account_npo_mir.model.server_connect.bind_meter.BindMeterRequestResult
 import me.apps.personal_account_npo_mir.model.server_connect.bind_meter.BindMeterServerRequest
-import me.apps.personal_account_npo_mir.model.server_connect.find_device.FindMeterRequestResult
-import me.apps.personal_account_npo_mir.model.server_connect.find_device.FindMeterServerRequest
+import me.apps.personal_account_npo_mir.model.server_connect.find_devices.FindMeterRequestResult
+import me.apps.personal_account_npo_mir.model.server_connect.find_devices.FindMeterServerRequest
 import me.apps.personal_account_npo_mir.model.server_connect.get_meters.GetMetersRequestResult
 import me.apps.personal_account_npo_mir.model.server_connect.get_meters.GetMetersServerRequest
 
@@ -21,10 +22,12 @@ class MetersService(private val scope: CoroutineScope) : IMetersService{
         request.run()
     }
     override fun saveMeters(meters: Array<Meter>) {
+        Log.d("CHECK_SERVICE", "saveMeters called, count=${meters.size}")
         this.meters = meters
+        Log.d("CHECK_SERVICE", "service meters count=${this.meters.size}")
     }
 
-    override fun findMeter(key: Int, limit: Int, token: String, resultListener:IServerRequestResultListener<FindMeterRequestResult>) {
+    override fun findMeters(key: Int?, limit: Int, token: String, resultListener:IServerRequestResultListener<FindMeterRequestResult>) {
         val request = FindMeterServerRequest(urlForHostLoopbackInterface, key, limit, token, scope)
         request.setServerRequestListener(resultListener)
         request.run()

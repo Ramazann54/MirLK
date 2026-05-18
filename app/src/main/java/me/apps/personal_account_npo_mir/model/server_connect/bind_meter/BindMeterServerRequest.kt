@@ -18,13 +18,11 @@ class BindMeterServerRequest(
     val url: String, val deviceId: Int, val token: String, val scope: CoroutineScope
 ) : IServerRequest<BindMeterRequestResult> {
     override fun setServerRequestListener(listener: IServerRequestResultListener<BindMeterRequestResult>) {
-        TODO("Not yet implemented")
+        this.listener = listener
     }
 
     override fun run() {
         scope.launch {
-
-
             if (url == "") {
                 withContext(Dispatchers.Main) {
                     listener?.onRequestFail(ErrorCode.BLANK_URL)
@@ -33,20 +31,14 @@ class BindMeterServerRequest(
                 withContext(Dispatchers.Main) {
                     listener?.onRequestFail(ErrorCode.BLANK_TOKEN)
                 }
-            } else if (deviceId == null) {
-                withContext(Dispatchers.Main) {
-                    listener?.onRequestFail(ErrorCode.BLANK_METER_ID)
-                }
-            } else if (token == "") {
-                withContext(Dispatchers.Main) {
-                    listener?.onRequestFail(ErrorCode.BLANK_TOKEN)
-                }
             } else {
                 var httpURLConnection: HttpURLConnection? = null
                 var streamReader: InputStreamReader? = null
-                var requestCode: String = ""
-                val urlAddress = URL(url + "/Devices/linktouser?deviceId=" + deviceId)
+
                 try {
+                    var requestCode: String = ""
+                    val urlAddress = URL(url + "/Devices/linktouser?deviceId=" + deviceId)
+
                     httpURLConnection = urlAddress.openConnection() as HttpURLConnection
                     httpURLConnection.setRequestProperty("X-User-Token", token)
                     httpURLConnection.apply {
@@ -54,12 +46,13 @@ class BindMeterServerRequest(
                         doInput = true
                         requestMethod = "POST"
                     }
+
                     streamReader = InputStreamReader(httpURLConnection.inputStream)
                     streamReader.use { requestCode = it.readText() }
-                    withContext(Dispatchers.Main) {
-                        listener?.onRequestSuccess(BindMeterRequestResult(requestCode.toInt()))
-                    }
 
+                    withContext(Dispatchers.Main) {
+                        listener?.onRequestSuccess(BindMeterRequestResult(requestCode))
+                    }
                 } catch (e: MalformedURLException) {
                     withContext(Dispatchers.Main) {
                         listener?.onRequestFail(ErrorCode.WRONG_URL)
