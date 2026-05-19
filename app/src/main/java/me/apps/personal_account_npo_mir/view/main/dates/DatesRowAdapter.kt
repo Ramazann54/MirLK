@@ -10,7 +10,7 @@ class DatesRowAdapter(private val presenter: ArchivePresenter): RecyclerView.Ada
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DatesListViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.fragment_archive, parent, false)
+            .inflate(R.layout.item_archive_measure, parent, false)
 
         return DatesListViewHolder(presenter, view)
     }

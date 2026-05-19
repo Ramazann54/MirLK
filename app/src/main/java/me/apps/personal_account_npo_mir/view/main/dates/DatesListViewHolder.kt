@@ -13,7 +13,8 @@ class DatesListViewHolder(
 ) : RecyclerView.ViewHolder(view), View.OnClickListener, IDateListViewItem {
 
     fun onBind() {
-        dateTextView = itemView.findViewById(R.id.date_text_view)
+        dateTextView = itemView.findViewById(R.id.archiveDateTextView)
+        valueTextView = itemView.findViewById(R.id.archiveValueTextView)
         itemView.setOnClickListener(this)
     }
 
@@ -22,7 +23,11 @@ class DatesListViewHolder(
     }
 
     override fun setDate(value: String) {
-        dateTextView.text = value
+        dateTextView.text = formatDate(value)
+    }
+
+    override fun setValue(value: String) {
+        valueTextView.text = "$value кВт·ч"
     }
 
     override fun onClick(view: View?) {
@@ -31,5 +36,10 @@ class DatesListViewHolder(
         }
     }
 
+    private fun formatDate(value: String): String {
+        return value.substringBefore(" ")
+    }
+
     private lateinit var dateTextView: TextView
+    private lateinit var valueTextView: TextView
 }

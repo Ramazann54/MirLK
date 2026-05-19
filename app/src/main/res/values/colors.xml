@@ -15,4 +15,11 @@
     <color name="back_light_gray">#E7E7E7</color>
     <color name="light_blue">#BDD1E5</color>
     <color name="dark">#3C3C3C</color>
+    <color name="card_blue_light">#EDF5FF</color>
+    <color name="main_blue">#0C54A0</color>
+    <color name="tariff_1">#7DBAF2</color>
+    <color name="tariff_2">#FFBC7A</color>
+    <color name="tariff_3">#67C0C7</color>
+    <color name="tariff_4">#8E63CE</color>
+    <color name="text_gray">#6F6F6F</color>
 </resources>

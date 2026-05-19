@@ -14,44 +14,67 @@ class SearchDevicesPresenter : IPresenter<ISearchDevicesView> {
 
     override fun onViewCreated(view: ISearchDevicesView) {
         this.view = view
+        view.showEmptySearch()
     }
 
     fun onSearchTextChanged(text: String) {
         val key = text.trim()
 
         if (key.isBlank()) {
+            foundDevices = emptyList()
+            selectedMeter = null
             view?.showEmptySearch()
             return
         }
 
+        val keyNumber = key.toIntOrNull()
+
+        if (keyNumber == null) {
+            foundDevices = emptyList()
+            selectedMeter = null
+            view?.showSearchError()
+            return
+        }
+
         App.metersService.findMeters(
-            key = key.toIntOrNull(),
+            key = keyNumber,
             limit = 10,
             token = App.userDataService.token,
             resultListener = object : IServerRequestResultListener<FindMeterRequestResult> {
+
                 override fun onRequestSuccess(result: FindMeterRequestResult) {
                     try {
                         val devices: Array<Meter> = Gson().fromJson(
                             result.meters,
                             Array<Meter>::class.java
                         )
+
                         val alreadyLinkedDeviceIds = App.metersService.meters
                             .map { it.id }
                             .toSet()
 
-                        val availableDevices = devices
+                        foundDevices = devices
                             .filter { foundDevice ->
                                 foundDevice.id !in alreadyLinkedDeviceIds
                             }
 
-                        view?.showFoundDevices(availableDevices.toList())
+                        if (foundDevices.isEmpty()) {
+                            view?.showEmptySearch()
+                        } else {
+                            view?.showFoundDevices(foundDevices)
+                        }
+
                     } catch (e: Exception) {
                         e.printStackTrace()
+                        foundDevices = emptyList()
+                        selectedMeter = null
                         view?.showSearchError()
                     }
                 }
 
                 override fun onRequestFail(message: ErrorCode) {
+                    foundDevices = emptyList()
+                    selectedMeter = null
                     view?.showSearchError()
                 }
             }
@@ -59,24 +82,33 @@ class SearchDevicesPresenter : IPresenter<ISearchDevicesView> {
     }
 
     fun onDeviceClicked(meter: Meter) {
-        view?.showContractNumberDialog(meter)
+        selectedMeter = meter
+        view?.showPasswordDialog(meter)
     }
 
-    fun onContractNumberEntered(meter: Meter, enteredContractNumber: String) {
-        val isAlreadyLinked = App.metersService.meters.any { it.id == meter.id }
+    fun onPasswordEntered(meterId: Int, password: String) {
+        val meter = currentDevices.firstOrNull { it.id == meterId }
 
+        if (meter == null) {
+            view?.showLinkError()
+            return
+        }
+
+        if (password != meter.contractNumber) {
+            view?.showWrongContractNumber()
+            return
+        }
+
+        val isAlreadyLinked = App.metersService.meters.any { it.id == meter.id }
         if (isAlreadyLinked) {
             view?.showLinkError()
             return
         }
-        if (enteredContractNumber != meter.contractNumber) {
-            view?.showWrongContractNumber()
-            return
-        }
+
         App.metersService.bindMeter(
             deviceId = meter.id,
             token = App.userDataService.token,
-            resultListener = object : IServerRequestResultListener<BindMeterRequestResult>{
+            resultListener = object : IServerRequestResultListener<BindMeterRequestResult> {
                 override fun onRequestSuccess(result: BindMeterRequestResult) {
                     view?.showLinkSuccess()
                 }
@@ -90,7 +122,11 @@ class SearchDevicesPresenter : IPresenter<ISearchDevicesView> {
 
     override fun onDestroy() {
         view = null
+        selectedMeter = null
     }
 
     private var view: ISearchDevicesView? = null
+    private var foundDevices: List<Meter> = emptyList()
+    private var selectedMeter: Meter? = null
+    private var currentDevices: List<Meter> = emptyList()
 }

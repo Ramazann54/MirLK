@@ -8,26 +8,25 @@ import me.apps.personalaccountnpomir.R
 
 class FoundDevicesAdapter(
     private val onClick: (Meter) -> Unit
-) : RecyclerView.Adapter<FoundDeviceViewHolder>() {
+) : RecyclerView.Adapter<FoundDevicesViewHolder>() {
 
-    private val devices = mutableListOf<Meter>()
+    private var devices: List<Meter> = emptyList()
 
-    fun setDevices(newDevices: List<Meter>) {
-        devices.clear()
-        devices.addAll(newDevices)
-        notifyDataSetChanged()
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoundDeviceViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FoundDevicesViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_found_device, parent, false)
 
-        return FoundDeviceViewHolder(view, onClick)
+        return FoundDevicesViewHolder(view, onClick)
     }
 
-    override fun onBindViewHolder(holder: FoundDeviceViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: FoundDevicesViewHolder, position: Int) {
         holder.bind(devices[position])
     }
 
     override fun getItemCount(): Int = devices.size
+
+    fun setDevices(newDevices: List<Meter>) {
+        devices = newDevices
+        notifyDataSetChanged()
+    }
 }

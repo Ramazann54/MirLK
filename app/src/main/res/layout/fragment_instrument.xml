@@ -1,25 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
     tools:context="me.apps.personal_account_npo_mir.view.main.instruments.InstrumentFragment">
 
-
     <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/blue_devices_rectangle"
-        android:elevation="10dp"
+        android:id="@+id/meterCardLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="0dp"
+        android:background="@drawable/light_blue_card"
+        android:elevation="0dp"
         android:orientation="vertical"
-        android:padding="5dp"
+        android:paddingStart="22dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -27,61 +35,198 @@
                 android:id="@+id/meterNameTextView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textColor="@color/dark"
-                android:textSize="17sp" />
+                android:layout_gravity="center_horizontal"
+                android:textColor="#062C63"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="Test" />
 
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+        </FrameLayout>
 
+        <FrameLayout
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="18dp">
 
-            <TextView
-                android:id="@+id/meterIdTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:textColor="@color/dark"
-                android:textSize="17sp" />
+            <me.apps.personal_account_npo_mir.view.main.instruments.TariffDonutView
+                android:id="@+id/tariffDonutView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/meterIndicationsTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#062C63"
+                    android:textSize="38sp"
+                    android:textStyle="bold"
+                    tools:text="53.76" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/electric_active_energy_units"
+                    android:textColor="#062C63"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+        </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
+            android:layout_marginTop="22dp"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/meterIndicationsTextView"
-                android:gravity="start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:textSize="40sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/electric_active_energy_units"
-                android:textColor="@color/black"
-                android:textSize="30sp" />
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/tariff_dot_1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="Тариф 1"
+                    android:textColor="#062C63"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tariff1TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#062C63"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="53 кВт·ч" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/tariff_dot_2" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="Тариф 2"
+                    android:textColor="#062C63"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tariff2TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#062C63"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="12 кВт·ч" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/tariff_dot_3" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="Тариф 3"
+                    android:textColor="#062C63"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tariff3TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#062C63"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="10 кВт·ч" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="34dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:background="@drawable/tariff_dot_4" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="Тариф 4"
+                    android:textColor="#062C63"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tariff4TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#062C63"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:text="18 кВт·ч" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <TextView
             android:id="@+id/dateTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:textColor="@color/dark"
-            android:textSize="17sp" />
-
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="18dp"
+            android:textColor="#7C8AA0"
+            android:textSize="16sp"
+            tools:text="18.05.2026 22:05" />
 
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,64 +1,58 @@
-package me.apps.personal_account_npo_mir.view.main.activities
+package me.apps.personal_account_npo_mir.view.main.fragments
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
-import android.widget.Button
+import android.view.ViewGroup
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.datepicker.MaterialDatePicker
 import me.apps.personal_account_npo_mir.presentation.main.activity_presenters.ArchivePresenter
 import me.apps.personal_account_npo_mir.view.abstractions.main.IArchiveView
 import me.apps.personal_account_npo_mir.view.main.dates.DatesRowAdapter
-import me.apps.personal_account_npo_mir.view.main.activities.OnDateArchiveActivity
-import java.text.SimpleDateFormat
-import java.util.Locale
-import java.util.Date
-import com.google.android.material.datepicker.MaterialDatePicker
 import me.apps.personalaccountnpomir.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class ArchiveActivity : AppCompatActivity(), IArchiveView, OnClickListener {
+class ArchiveFragment : Fragment(), IArchiveView {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_archive)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_archive_screen, container, false)
+    }
 
-        recyclerView = findViewById<RecyclerView>(R.id.archiveRecycler).apply {
-            adapter = this@ArchiveActivity.adapter
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        recyclerView = view.findViewById<RecyclerView>(R.id.archiveRecycler).apply {
+            adapter = this@ArchiveFragment.adapter
         }
 
-        presenter.onViewCreated(this)
-
-        backButton = findViewById(R.id.back_button)
-        backButton.setOnClickListener(this)
-
-        fromDate = findViewById(R.id.fromDate)
-        toDate = findViewById(R.id.toDate)
+        fromDate = view.findViewById(R.id.fromDate)
+        toDate = view.findViewById(R.id.toDate)
 
         fromDate.setOnClickListener {
             showDatePicker(fromDate)
         }
+
         toDate.setOnClickListener {
             showDatePicker(toDate)
         }
+
+        presenter.onViewCreated(this)
     }
 
-    override fun onClick(view: View?) {
-        if (view === backButton) {
-            onBackPressedDispatcher.onBackPressed()
-        }
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         presenter.onDestroy()
     }
 
     override fun setHeader(header: String) {
-        supportActionBar?.title = header
+        // В фрагменте заголовок уже есть на главном экране, поэтому тут ничего не делаем.
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -67,11 +61,14 @@ class ArchiveActivity : AppCompatActivity(), IArchiveView, OnClickListener {
     }
 
     override fun startItemActivity() {
-        val intent = Intent(this, OnDateArchiveActivity::class.java)
-        startActivity(intent)
+        ArchiveMeasureDialogFragment()
+            .show(parentFragmentManager, "ARCHIVE_MEASURE_DIALOG")
     }
+
     private fun showDatePicker(targetField: EditText) {
         val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .setTitleText("\u00A0")
             .setTheme(R.style.MirDatePickerTheme)
             .build()
 
@@ -82,8 +79,9 @@ class ArchiveActivity : AppCompatActivity(), IArchiveView, OnClickListener {
             tryLoadArchive()
         }
 
-        datePicker.show(supportFragmentManager, "DATE_PICKER")
+        datePicker.show(parentFragmentManager, "DATE_PICKER")
     }
+
     private fun tryLoadArchive() {
         val from = fromDate.text.toString()
         val to = toDate.text.toString()
@@ -92,10 +90,11 @@ class ArchiveActivity : AppCompatActivity(), IArchiveView, OnClickListener {
             presenter.onTransferButtonClick(from, to)
         }
     }
+
     private lateinit var recyclerView: RecyclerView
-    private val presenter = ArchivePresenter()
-    private val adapter = DatesRowAdapter(presenter)
-    private lateinit var backButton: Button
     private lateinit var fromDate: EditText
     private lateinit var toDate: EditText
+
+    private val presenter = ArchivePresenter()
+    private val adapter = DatesRowAdapter(presenter)
 }

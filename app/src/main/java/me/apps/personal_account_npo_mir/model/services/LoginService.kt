@@ -11,7 +11,7 @@ import me.apps.personal_account_npo_mir.model.server_connect.sign_in.SignInServe
 class SignInService(private val scope: CoroutineScope) : ILoginService {
 
 
-val urlForHostLoopbackInterface: String = "http://127.0.0.1:5000/api"
+val urlForHostLoopbackInterface: String = "http://192.168.0.106:5000/api"
 
     override fun signIn(
         username: String,

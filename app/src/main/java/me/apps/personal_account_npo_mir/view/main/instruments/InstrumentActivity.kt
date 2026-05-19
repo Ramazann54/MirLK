@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.View.OnClickListener
-import android.widget.Button
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -14,19 +12,17 @@ import me.apps.personal_account_npo_mir.di.App
 import me.apps.personal_account_npo_mir.presentation.main.instruments.InstrumentPresenter
 import me.apps.personal_account_npo_mir.view.abstractions.main.IMainView
 import me.apps.personal_account_npo_mir.view.login.LogRegActivity
-import me.apps.personal_account_npo_mir.view.main.activities.ArchiveActivity
 import me.apps.personal_account_npo_mir.view.main.activities.InformationActivity
 import me.apps.personal_account_npo_mir.view.main.activities.TransmittalActivity
 import me.apps.personal_account_npo_mir.view.main.activities.diagnostic.DiagnosticActivity
 import me.apps.personal_account_npo_mir.view.search.SearchDevicesActivity
 import me.apps.personalaccountnpomir.R
-import android.content.Context
-import android.util.DisplayMetrics
 import android.widget.TextView
-import androidx.core.view.ViewCompat
-import androidx.core.view.isEmpty
-import androidx.core.view.size
-import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.recyclerview.widget.RecyclerView
+import kotlin.math.abs
+import android.widget.FrameLayout
+import me.apps.personal_account_npo_mir.view.main.fragments.ArchiveFragment
+import me.apps.personal_account_npo_mir.view.search.SearchDevicesFragment
 
 
 class InstrumentActivity : FragmentActivity(), IMainView,
@@ -34,6 +30,11 @@ class InstrumentActivity : FragmentActivity(), IMainView,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_instrument)
+        titleTextView = findViewById(R.id.titleTextView)
+        mainContentContainer = findViewById(R.id.mainContentContainer)
+
+        homeButton = findViewById(R.id.homeTab)
+        homeButton.setOnClickListener(this)
 
         archiveButton = findViewById(R.id.archiveButton)
         archiveButton.setOnClickListener(this)
@@ -61,13 +62,13 @@ class InstrumentActivity : FragmentActivity(), IMainView,
 
         viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = adapter
+        setupViewPagerCarousel()
         tabLayout = findViewById(R.id.tab_layout)
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
             tab.text = "${(position + 1)}"
         }.attach()
 
-        viewPager.setPreviewBothSide(R.dimen._30dp,R.dimen._35dp)
 
         if(adapter.itemCount == 0){
             informationButton.visibility = View.GONE
@@ -81,6 +82,11 @@ class InstrumentActivity : FragmentActivity(), IMainView,
 
     override fun onClick(view: View?) {
         presenter.setIndex(tabLayout.selectedTabPosition)
+
+        if (view === homeButton) {
+            showHomeContent()
+            return
+        }
 
         if (view === archiveButton) {
             presenter.onArchiveButtonClick()
@@ -108,6 +114,7 @@ class InstrumentActivity : FragmentActivity(), IMainView,
 
             adapter = DeviceAdapter(this, presenter)
             viewPager.adapter = adapter
+            setupViewPagerCarousel()
 
             if (adapter.itemCount > 0) {
                 val safeItem = currentItem.coerceAtMost(adapter.itemCount - 1)
@@ -135,8 +142,7 @@ class InstrumentActivity : FragmentActivity(), IMainView,
 
 
     override fun startArchiveActivity() {
-        val intent = Intent(this, ArchiveActivity::class.java)
-        startActivity(intent)
+        showArchiveFragment()
     }
 
     override fun startDiagnosticActivity() {
@@ -164,8 +170,7 @@ class InstrumentActivity : FragmentActivity(), IMainView,
     }
 
     override fun startSearchDevicesActivity() {
-        val intent = Intent(this, SearchDevicesActivity::class.java)
-        startActivity(intent)
+        showSearchDevicesFragment()
     }
 
 
@@ -178,6 +183,7 @@ class InstrumentActivity : FragmentActivity(), IMainView,
         informationButton.setOnClickListener(null)
 
         logoutButton.setOnClickListener(null)
+        homeButton.setOnClickListener(null)
 
         presenter.onDestroy()
     }
@@ -191,18 +197,84 @@ class InstrumentActivity : FragmentActivity(), IMainView,
             presenter.refreshData()
         }
     }
+    private fun setupViewPagerCarousel() {
+        val recyclerView = viewPager.getChildAt(0) as RecyclerView
+
+        val sideVisibleWidth = 24.dp()
+        val pageMargin = 6.dp()
+
+        recyclerView.clipToPadding = false
+        recyclerView.clipChildren = false
+        recyclerView.setPadding(sideVisibleWidth, 0, sideVisibleWidth, 0)
+
+        viewPager.clipToPadding = false
+        viewPager.clipChildren = false
+        viewPager.offscreenPageLimit = 3
+
+        viewPager.setPageTransformer { page, position ->
+            page.translationX = -(pageMargin * position)
+            page.scaleY = 0.96f + (1 - abs(position)) * 0.04f
+            page.alpha = 0.85f + (1 - abs(position)) * 0.15f
+        }
+    }
+
+    private fun Int.dp(): Int {
+        return (this * resources.displayMetrics.density).toInt()
+    }
+
+    private fun showArchiveFragment() {
+        titleTextView.text = "Архив показаний"
+        viewPager.visibility = View.GONE
+        diagnosticButton.visibility = View.GONE
+        textView.visibility = View.GONE
+        mainContentContainer.visibility = View.VISIBLE
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContentContainer, ArchiveFragment())
+            .commit()
+    }
+
+    private fun showHomeContent() {
+        titleTextView.text = "Приборы учета"
+        mainContentContainer.visibility = View.GONE
+        viewPager.visibility = View.VISIBLE
+
+        if (adapter.itemCount > 0) {
+            diagnosticButton.visibility = View.VISIBLE
+            textView.visibility = View.GONE
+        } else {
+            diagnosticButton.visibility = View.GONE
+            textView.visibility = View.VISIBLE
+        }
+    }
+    private fun showSearchDevicesFragment() {
+        titleTextView.text = "Добавление устройства"
+
+        viewPager.visibility = View.GONE
+        diagnosticButton.visibility = View.GONE
+        textView.visibility = View.GONE
+        mainContentContainer.visibility = View.VISIBLE
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.mainContentContainer, SearchDevicesFragment())
+            .commit()
+    }
 
 
     private lateinit var adapter: DeviceAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
-    private lateinit var addDevicesButton: AppCompatButton
-    private lateinit var archiveButton: Button
-    private lateinit var diagnosticButton: Button
-    private lateinit var transmittalButton: Button
-    private lateinit var informationButton: Button
-    private lateinit var logoutButton: Button
+    private lateinit var addDevicesButton: View
+    private lateinit var archiveButton: View
+    private lateinit var diagnosticButton: View
+    private lateinit var transmittalButton: View
+    private lateinit var informationButton: View
+    private lateinit var logoutButton: View
     private lateinit var textView: TextView
     private var presenter = InstrumentPresenter()
     private var firstResume = true
+    private lateinit var mainContentContainer: FrameLayout
+    private lateinit var homeButton: View
+    private lateinit var titleTextView: TextView
+
 }

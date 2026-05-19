@@ -37,7 +37,10 @@ class ArchivePresenter :
     }
 
     fun onBindViewItem(view: IDateListViewItem, position: Int) {
-        view.setDate(dates[position])
+        val measure = App.archiveDateService.arrayOfMeasures[position]
+
+        view.setDate(measure.timestamp)
+        view.setValue(measure.summary)
     }
 
     fun onItemClick(position: Int) {
@@ -63,7 +66,7 @@ class ArchivePresenter :
     }
 
     val itemsCount: Int
-        get() = dates.size
+        get() = App.archiveDateService.arrayOfMeasures.size
 
     override fun onRequestSuccess(result: GetMeasuresRequestResult) {
         Log.d("ARCHIVE_TEST", "Зашли в onRequestSuccess")

@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import me.apps.personal_account_npo_mir.presentation.main.instruments.InstrumentFragmentPresenter
 import me.apps.personalaccountnpomir.R
-import java.text.SimpleDateFormat
-import java.util.*
 
 const val ARG_OBJECT = "object"
 
@@ -24,9 +22,8 @@ class InstrumentFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-
         presenter.onViewCreated(this)
+
         arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
             try {
                 presenter.onMeterIndexCreate(this.getInt(ARG_OBJECT))
@@ -38,34 +35,36 @@ class InstrumentFragment : Fragment() {
 
     fun setMeterIndications(text: String) {
         val indicationsTextView = view?.findViewById<TextView>(R.id.meterIndicationsTextView)
-        sumIndications = text
-        indicationsTextView?.text = sumIndications
+        indicationsTextView?.text = text
     }
 
     fun setMeterTime(timestamp: String) {
-        dateView = view?.findViewById(R.id.dateTextView)
-        //dateView?.text = simpleDate.parse(timestamp)?.toString()
+        val dateView = view?.findViewById<TextView>(R.id.dateTextView)
         dateView?.text = timestamp
     }
 
     fun setMeterName(name: String) {
-        meterName = view?.findViewById(R.id.meterNameTextView2)
-        meterName?.text = name
+        val meterName = view?.findViewById<TextView>(R.id.meterNameTextView2)
+        meterName?.text = name.ifBlank { "Дом" }
     }
 
-    fun setMeterId(id: Int) {
-        meterIdTextView = view?.findViewById(R.id.meterIdTextView)
-        meterIdTextView?.text = id.toString()
+    fun setTariffs(tariff1: String, tariff2: String, tariff3: String, tariff4: String) {
+        val unit = getString(R.string.electric_active_energy_units)
+
+        view?.findViewById<TextView>(R.id.tariff1TextView)?.text = "$tariff1 $unit"
+        view?.findViewById<TextView>(R.id.tariff2TextView)?.text = "$tariff2 $unit"
+        view?.findViewById<TextView>(R.id.tariff3TextView)?.text = "$tariff3 $unit"
+        view?.findViewById<TextView>(R.id.tariff4TextView)?.text = "$tariff4 $unit"
+
+        view?.findViewById<TariffDonutView>(R.id.tariffDonutView)
+            ?.setTariffs(tariff1, tariff2, tariff3, tariff4)
     }
 
+    fun showLoadingMeasure() {
+        setMeterIndications("—")
+        setMeterTime("Данные загружаются")
+        setTariffs("0", "0", "0", "0")
+    }
 
-    private val simpleDate = SimpleDateFormat("dd.MM.yyyy hh:mm", Locale.CHINA)
     private val presenter = InstrumentFragmentPresenter()
-    private var sumIndications: String = ""
-    private var dateView: TextView? = null
-    private var meterName: TextView? = null
-
-    private var meterIdTextView: TextView? = null
-
-
 }
