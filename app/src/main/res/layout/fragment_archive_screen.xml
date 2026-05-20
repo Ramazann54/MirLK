@@ -25,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Показания за период"
-            android:textColor="@color/main_blue"
-            android:textSize="22sp"
+            android:textColor="#062C63"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <LinearLayout

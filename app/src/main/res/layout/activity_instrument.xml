@@ -15,7 +15,7 @@
         android:layout_marginTop="28dp"
         android:text="Приборы учета"
         android:textColor="@color/main_blue"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -94,8 +94,8 @@
             android:layout_marginStart="18dp"
             android:layout_weight="1"
             android:text="Диагностика"
-            android:textColor="@color/main_blue"
-            android:textSize="22sp"
+            android:textColor="#062C63"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -139,9 +139,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/homeIcon"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
-                android:src="@drawable/home" />
+                app:srcCompat="@drawable/home" />
 
         </LinearLayout>
 
@@ -154,9 +155,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/archiveIcon"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
-                android:src="@drawable/archive" />
+                app:srcCompat="@drawable/archive" />
 
         </LinearLayout>
 
@@ -169,9 +171,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/addIcon"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/add" />
+                app:srcCompat="@drawable/add" />
 
         </LinearLayout>
 
@@ -184,10 +187,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/transIcon"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                app:srcCompat="@drawable/ic_transmit_new"
-                app:tint="@color/main_blue" />
+                app:srcCompat="@drawable/ic_transmit_new" />
 
         </LinearLayout>
 
@@ -200,9 +203,10 @@
             android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/infoIcon"
                 android:layout_width="26dp"
                 android:layout_height="26dp"
-                android:src="@drawable/information" />
+                app:srcCompat="@drawable/information" />
 
         </LinearLayout>
 

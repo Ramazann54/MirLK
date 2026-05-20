@@ -10,116 +10,117 @@ import me.apps.personal_account_npo_mir.presentation.abstraction.ISupportWarning
 import me.apps.personal_account_npo_mir.view.abstractions.dialogs.IWarningDialogView
 import me.apps.personal_account_npo_mir.view.abstractions.main.ITransmittalView
 import me.apps.personalaccountnpomir.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class TransmittalPresenter : IPresenter<ITransmittalView>,
+class TransmittalPresenter :
+    IPresenter<ITransmittalView>,
     ISupportWarningDialogPresenter,
     IServerRequestResultListener<PutMeasureRequestResult> {
 
-    /**
-     * Колбэк при создании View
-     */
     override fun onViewCreated(view: ITransmittalView) {
         this.view = view
     }
 
-    /**
-     * Колбэк при изменении текста в поле "summaryMeasure"
-     */
     fun onSummaryTextChanged(summary: String) {
         this.summary = summary
     }
 
-    /**
-     * Колбэк при изменении текста в поле "tariff1"
-     */
     fun onTariff1TextChanged(tariff1: String) {
         this.tariff1 = tariff1
     }
 
-    /**
-     * Колбэк при изменении текста в поле "tariff2"
-     */
     fun onTariff2TextChanged(tariff2: String) {
         this.tariff2 = tariff2
     }
 
-    /**
-     * Колбэк при изменении текста в поле "tariff3"
-     */
     fun onTariff3TextChanged(tariff3: String) {
         this.tariff3 = tariff3
     }
 
-    /**
-     * Колбэк при изменении текста в поле "tariff4"
-     */
     fun onTariff4TextChanged(tariff4: String) {
         this.tariff4 = tariff4
     }
 
-    /**
-     * Колбэк при нажатии на кнопку "handOverButton"
-     */
     fun onClickHandOverButton() {
         var success = true
-        //Проверка текста в поле "summaryMeasure"
+
         if (summary.isBlank()) {
             success = false
             view?.setSummaryBackground(R.drawable.ic_warning_frame_trans)
         } else {
             view?.setSummaryBackground(R.drawable.rec_trans)
         }
-        //Проверка текста в поле "tariff1"
+
         if (tariff1.isBlank()) {
             success = false
             view?.setTariff1Background(R.drawable.ic_warning_frame_trans)
         } else {
             view?.setTariff1Background(R.drawable.rec_trans)
         }
-        //Проверка текста в поле "tariff2"
+
         if (tariff2.isBlank()) {
             success = false
             view?.setTariff2Background(R.drawable.ic_warning_frame_trans)
         } else {
             view?.setTariff2Background(R.drawable.rec_trans)
         }
-        //Проверка текста в поле "tariff3"
+
         if (tariff3.isBlank()) {
             success = false
             view?.setTariff3Background(R.drawable.ic_warning_frame_trans)
         } else {
             view?.setTariff3Background(R.drawable.rec_trans)
         }
-        //Проверка текста в поле "tariff4"
+
         if (tariff4.isBlank()) {
             success = false
             view?.setTariff4Background(R.drawable.ic_warning_frame_trans)
         } else {
             view?.setTariff4Background(R.drawable.rec_trans)
         }
-        if (success) {
-            //Обращение к серверу
-            App.measuresService.putMeasure(
-                App.metersService.meters[App.indexService.index].id,
-                App.userDataService.token,
-                Measure(
-                    summary, tariff1, tariff2,
-                    tariff3, tariff4, "24.07.2023 08:07"
-                ),
-                this
-            )
-        }
+
+        if (!success) return
+
+        val currentMeter = App.metersService.meters[App.indexService.index]
+
+        val measure = Measure(
+            summary = summary,
+            tariff1 = tariff1,
+            tariff2 = tariff2,
+            tariff3 = tariff3,
+            tariff4 = tariff4,
+            timestamp = getCurrentDateTime()
+        )
+
+        lastSentMeasure = measure
+
+        App.measuresService.putMeasure(
+            currentMeter.id,
+            App.userDataService.token,
+            measure,
+            this
+        )
     }
 
-    fun getMeterName(): String{
-        return App.metersService.meters[App.indexService.index].name
+    fun getMeterName(): String {
+        val meter = App.metersService.meters[App.indexService.index]
+        return formatShortAddress(meter.address)
     }
 
     override fun onRequestSuccess(result: PutMeasureRequestResult) {
-        if(result.responseCode == 200){
+        if (result.responseCode == 200) {
+            val currentMeter = App.metersService.meters[App.indexService.index]
+            val measure = lastSentMeasure
+
+            if (measure != null) {
+                App.measuresService.measuresMap[currentMeter.id] = measure
+            }
+
             view?.showDialog()
-        }else{
-            throw java.lang.Exception("Error with connecting to server")
+        } else {
+            throw Exception("Error with connecting to server")
         }
     }
 
@@ -127,9 +128,6 @@ class TransmittalPresenter : IPresenter<ITransmittalView>,
         throw Exception("server error")
     }
 
-    /**
-     * Колбэк при завершении работы презентера
-     */
     override fun onDestroy() {
         this.view = null
         summary = ""
@@ -137,40 +135,59 @@ class TransmittalPresenter : IPresenter<ITransmittalView>,
         tariff2 = ""
         tariff3 = ""
         tariff4 = ""
+        lastSentMeasure = null
     }
 
-    /**
-     * Колбэк при создании диалога
-     */
     override fun onDialogCreate(view: IWarningDialogView) {
         view.setTitle(R.string.success)
         view.setWarningMessage(R.string.well_done)
     }
 
-    /**
-     * Колбэк при завершении работы диалога
-     */
     override fun onDialogDestroy() {
-
     }
 
-    /**
-     * Колбэк при нажатии в диалоге кнопки "Ок"
-     */
     override fun onOkButtonClick() {
-
     }
 
-    /**
-     * Колбэк при нажатии в диалоге кнопки "Отмена"
-     */
     override fun onCancelButtonClick() {
-
     }
+
+    private fun getCurrentDateTime(): String {
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
+
+    private fun formatShortAddress(address: String): String {
+        var result = address
+            .replace("г. Омск,", "")
+            .replace("г. Омск", "")
+            .replace("ул.", "")
+            .replace("д.", "")
+            .trim()
+
+        val flatRegex = Regex("""кв\.?\s*(\d+[А-Яа-яA-Za-z]?)""")
+        val flat = flatRegex.find(result)?.groupValues?.getOrNull(1)
+
+        result = result
+            .replace(Regex(""",?\s*кв\.?\s*\d+[А-Яа-яA-Za-z]?"""), "")
+            .replace(",", "")
+            .replace(Regex("""\s+"""), " ")
+            .trim()
+
+        return if (!flat.isNullOrBlank()) {
+            "$result, кв. $flat"
+        } else {
+            result
+        }
+    }
+
     private var view: ITransmittalView? = null
+
     private var summary: String = ""
     private var tariff1: String = ""
     private var tariff2: String = ""
     private var tariff3: String = ""
     private var tariff4: String = ""
+
+    private var lastSentMeasure: Measure? = null
 }

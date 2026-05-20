@@ -7,6 +7,6 @@ interface IDiagnosticsService {
     fun getDiagnostics(
         deviceId: Int,
         token: String,
-        resultListener: IServerRequestResultListener<GetDiagnosticsRequestResult>
+        resultListener: IServerRequestResultListener<GetDiagnosticsRequestResult>,
     )
 }

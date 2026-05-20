@@ -60,7 +60,7 @@ class LinkDeviceDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val meterId = requireArguments().getInt(ARG_METER_ID)
-        val serialNumber = requireArguments().getString(ARG_SERIAL_NUMBER).orEmpty()
+        val deviceName = requireArguments().getString(ARG_DEVICE_NAME).orEmpty()
 
         val serialNumberTitleTextView =
             view.findViewById<TextView>(R.id.serialNumberTitleTextView)
@@ -73,7 +73,7 @@ class LinkDeviceDialogFragment : DialogFragment() {
         val okButton =
             view.findViewById<MaterialButton>(R.id.okButton)
 
-        serialNumberTitleTextView.text = serialNumber
+        serialNumberTitleTextView.text = deviceName
 
         var passwordVisible = false
 
@@ -111,13 +111,13 @@ class LinkDeviceDialogFragment : DialogFragment() {
 
     companion object {
         private const val ARG_METER_ID = "ARG_METER_ID"
-        private const val ARG_SERIAL_NUMBER = "ARG_SERIAL_NUMBER"
+        private const val ARG_DEVICE_NAME = "ARG_DEVICE_NAME"
 
-        fun newInstance(meterId: Int, serialNumber: String): LinkDeviceDialogFragment {
+        fun newInstance(meterId: Int, deviceName: String): LinkDeviceDialogFragment {
             val fragment = LinkDeviceDialogFragment()
             fragment.arguments = Bundle().apply {
                 putInt(ARG_METER_ID, meterId)
-                putString(ARG_SERIAL_NUMBER, serialNumber)
+                putString(ARG_DEVICE_NAME, deviceName)
             }
             return fragment
         }

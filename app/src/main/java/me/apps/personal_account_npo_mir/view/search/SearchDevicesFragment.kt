@@ -98,7 +98,7 @@ class SearchDevicesFragment :
         LinkDeviceDialogFragment
             .newInstance(
                 meterId = meter.id,
-                serialNumber = meter.serialNumber.toString()
+                deviceName = meter.name
             )
             .show(childFragmentManager, "LINK_DEVICE_DIALOG")
     }

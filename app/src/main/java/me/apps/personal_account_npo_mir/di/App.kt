@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import me.apps.personal_account_npo_mir.model.abstractions.user_data.ITokenService
 import me.apps.personal_account_npo_mir.model.abstractions.archive_date.IArchiveDateService
+import me.apps.personal_account_npo_mir.model.abstractions.diagnostics.IDiagnosticsService
 import me.apps.personal_account_npo_mir.model.abstractions.index.IIndexService
 import me.apps.personal_account_npo_mir.model.abstractions.login.ILoginService
 import me.apps.personal_account_npo_mir.model.abstractions.measures.IMeasureService
@@ -24,6 +25,7 @@ class   App : Application() {
         archiveDateService = ArchiveDateService()
         metersService = MetersService(networkScope)
         indexService = IndexService()
+        diagnosticService = DiagnosticsService(networkScope)
     }
 
     companion object {
@@ -35,5 +37,6 @@ class   App : Application() {
         lateinit var archiveDateService: IArchiveDateService
         lateinit var metersService: IMetersService
         lateinit var indexService: IIndexService
+        lateinit var diagnosticService: IDiagnosticsService
     }
 }
